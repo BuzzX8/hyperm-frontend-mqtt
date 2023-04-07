@@ -1,4 +1,4 @@
-use super::qos::Qos;
+use super::Qos;
 
 pub struct SubscriptionRequest {
     topic_filter: String,

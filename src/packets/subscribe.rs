@@ -1,4 +1,4 @@
-use super::packet_id::*;
+use super::*;
 
 pub struct Subscribe {
     id: PacketId,
