@@ -28,4 +28,12 @@ impl SubAck {
             reason_codes: reason_codes.into(),
         }
     }
+
+    pub fn id(&self) -> PacketId {
+        self.id
+    }
+
+    pub fn reason_codes(&self) -> &[ReasonCode] {
+        &self.reason_codes
+    }
 }

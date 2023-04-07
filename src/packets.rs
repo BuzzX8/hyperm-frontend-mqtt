@@ -4,6 +4,8 @@ pub mod reason_code;
 pub mod disconnect;
 pub mod subscribe;
 pub mod sub_ack;
+pub mod unsubscribe;
+pub mod unsub_ack;
 
 #[derive(Clone)]
 pub enum Qos {
