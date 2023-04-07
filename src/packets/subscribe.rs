@@ -7,12 +7,9 @@ pub struct Subscribe {
 
 impl Subscribe {
     pub fn new(requests: &[SubscriptionRequest]) -> Subscribe {
-        let mut reqs: Vec<SubscriptionRequest> = Vec::with_capacity(requests.len());
-        reqs.extend_from_slice(requests);
-
         Subscribe {
             id: new_packet_id(),
-            requests: reqs,
+            requests: Vec::from(requests),
         }
     }
 
