@@ -1,15 +1,31 @@
-use super::{subscription_request::SubscriptionRequest, *};
+use super::*;
 
 pub struct Subscribe {
     id: PacketId,
-    requests: Vec<SubscriptionRequest>,
+    requests: Vec<Request>,
+}
+
+#[derive(Clone)]
+pub struct Request {
+    topic_filter: String,
+    max_qos: Qos,
+    no_local: bool,
+    retain_as_published: bool,
+    retain_handling_option: RetainHandlingOption
+}
+
+#[derive(Clone)]
+pub enum RetainHandlingOption {
+    SendAtSubscribeTime,
+    SendIfSubscriptionDoesNotExists,
+    DonNotSend
 }
 
 impl Subscribe {
-    pub fn new(requests: &[SubscriptionRequest]) -> Subscribe {
+    pub fn new(requests: &[Request]) -> Subscribe {
         Subscribe {
             id: new_packet_id(),
-            requests: Vec::from(requests),
+            requests: requests.into(),
         }
     }
 
