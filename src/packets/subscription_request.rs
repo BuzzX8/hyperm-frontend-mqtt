@@ -1,6 +1,6 @@
 use super::Qos;
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub struct SubscriptionRequest {
     topic_filter: String,
     max_qos: Qos,
@@ -9,6 +9,7 @@ pub struct SubscriptionRequest {
     retain_handling_option: RetainHandlingOption
 }
 
+#[derive(Clone)]
 pub enum RetainHandlingOption {
     SendAtSubscribeTime,
     SendIfSubscriptionDoesNotExists,
