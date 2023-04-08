@@ -9,7 +9,7 @@ pub mod unsubscribe;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Qos {
     Qos0,
     Qos1,
@@ -18,7 +18,7 @@ pub enum Qos {
 
 pub type PacketId = u16;
 
-pub(crate) fn new_packet_id() -> PacketId {
+pub(super) fn new_packet_id() -> PacketId {
     let time_span = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
     time_span.as_nanos() as u16
 }

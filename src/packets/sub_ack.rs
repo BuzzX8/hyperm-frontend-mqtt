@@ -5,7 +5,7 @@ pub struct SubAck {
     reason_codes: Vec<ReasonCode>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ReasonCode {
     GrantedQos0 = 0x00,
     GrantedQos1 = 0x01,
@@ -18,7 +18,7 @@ pub enum ReasonCode {
     QuotaExceeded = 0x97,
     SharedSubscriptionsNotSupported = 0x9E,
     SubscriptionIdentifiersNotSupported = 0xA1,
-    WildcardSubscriptionsNotSupported = 0xA2
+    WildcardSubscriptionsNotSupported = 0xA2,
 }
 
 impl SubAck {
@@ -35,5 +35,19 @@ impl SubAck {
 
     pub fn reason_codes(&self) -> &[ReasonCode] {
         &self.reason_codes
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::sub_ack::*;
+
+    #[test]
+    fn subscribe_new_creates_packet() {
+        let reason_codes = [ReasonCode::GrantedQos0, ReasonCode::GrantedQos1];
+        let sub_ack = SubAck::new(&reason_codes[..]);
+
+        assert_ne!(0, sub_ack.id());
+        assert_eq!(&reason_codes[..], sub_ack.reason_codes());
     }
 }

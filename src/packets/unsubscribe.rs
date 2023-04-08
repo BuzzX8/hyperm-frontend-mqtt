@@ -17,3 +17,16 @@ impl Unsubscribe {
         self.id
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Unsubscribe;
+
+    #[test]
+    fn new_unsubscribe_creates_packet() {
+        let topic_filters = ["topic-1", "topic-2", "topic-3"];
+        let unsubscribe = Unsubscribe::new(&topic_filters);
+
+        assert_ne!(0, unsubscribe.id());
+    }
+}
