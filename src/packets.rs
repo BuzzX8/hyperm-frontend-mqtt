@@ -5,10 +5,11 @@ pub mod sub_ack;
 pub mod subscribe;
 pub mod unsub_ack;
 pub mod unsubscribe;
+pub mod publish;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Qos {
     Qos0,
     Qos1,
