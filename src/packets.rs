@@ -7,6 +7,7 @@ pub mod unsub_ack;
 pub mod unsubscribe;
 pub mod publish;
 pub mod pub_ack;
+pub mod pub_rec;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 

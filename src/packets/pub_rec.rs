@@ -1,6 +1,6 @@
 use super::{new_packet_id, PacketId};
 
-pub struct PubAck {
+pub struct PubRec {
     id: PacketId,
     reason_code: ReasonCode,
 }
@@ -18,9 +18,9 @@ pub enum ReasonCode {
     PayloadFormatInvalid = 0x99
 }
 
-impl PubAck {
-    pub fn new(reason_code: ReasonCode) -> PubAck {
-        PubAck {
+impl PubRec {
+    pub fn new(reason_code: ReasonCode) -> PubRec {
+        PubRec {
             id: new_packet_id(),
             reason_code,
         }
@@ -40,9 +40,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn new_creates_pub_ack_packet() {
+    fn new_creates_pub_rec_packet() {
         let reason_code = ReasonCode::ImplementationSpecificError;
-        let pub_ack = PubAck::new(reason_code);
+        let pub_ack = PubRec::new(reason_code);
 
         assert_ne!(0, pub_ack.id());
         assert_eq!(reason_code, pub_ack.reason_code());
