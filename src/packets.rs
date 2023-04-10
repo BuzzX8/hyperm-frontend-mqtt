@@ -8,6 +8,8 @@ pub mod unsubscribe;
 pub mod publish;
 pub mod pub_ack;
 pub mod pub_rec;
+pub mod pub_rel;
+pub mod pub_comp;
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
