@@ -9,7 +9,7 @@ pub struct Connect {
 impl Connect {
     fn new(client_id: &str) -> Connect {
         Connect {
-            client_id: client_id.to_owned(),
+            client_id: client_id.into(),
             clean_start: false,
             keep_alive: Option::None,
             user_name: Option::None
