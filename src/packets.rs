@@ -1,7 +1,6 @@
 pub mod conn_ack;
 pub mod connect;
 pub mod disconnect;
-pub mod reason_code;
 pub mod sub_ack;
 pub mod subscribe;
 pub mod unsub_ack;

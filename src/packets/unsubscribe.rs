@@ -16,6 +16,10 @@ impl Unsubscribe {
     pub fn id(&self) -> PacketId {
         self.id
     }
+
+    pub fn topic_filters(&self) -> &[String]{
+        &self.topic_filters
+    }
 }
 
 #[cfg(test)]
@@ -28,5 +32,6 @@ mod tests {
         let unsubscribe = Unsubscribe::new(&topic_filters);
 
         assert_ne!(0, unsubscribe.id());
+        assert_eq!(topic_filters, unsubscribe.topic_filters());
     }
 }
