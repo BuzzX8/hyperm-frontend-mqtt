@@ -1,5 +1,13 @@
 use std::mem::size_of;
 
+use crate::packets::{
+    conn_ack::ConnAck, connect::Connect, disconnect::Disconnect, pub_ack::PubAck,
+    pub_comp::PubComp, pub_rec::PubRec, pub_rel::PubRel, publish::Publish, sub_ack::SubAck,
+    subscribe::Subscribe, unsub_ack::UnsubAck, unsubscribe::Unsubscribe,
+};
+
+type Result = std::result::Result<(), EncodingError>;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum EncodingError {
     BufferTooSmall,
@@ -7,7 +15,7 @@ pub enum EncodingError {
     ValueTooBig { max_val: u32 },
 }
 
-pub fn encode_u16(buffer: &mut [u8], value: u16) -> Result<(), EncodingError> {
+pub fn encode_u16(buffer: &mut [u8], value: u16) -> Result {
     if buffer.len() < size_of::<u16>() {
         return Err(EncodingError::BufferTooSmall);
     }
@@ -18,7 +26,7 @@ pub fn encode_u16(buffer: &mut [u8], value: u16) -> Result<(), EncodingError> {
     Ok(())
 }
 
-pub fn encode_u32(buffer: &mut [u8], value: u32) -> Result<(), EncodingError> {
+pub fn encode_u32(buffer: &mut [u8], value: u32) -> Result {
     if buffer.len() < size_of::<u32>() {
         return Err(EncodingError::BufferTooSmall);
     }
@@ -31,7 +39,7 @@ pub fn encode_u32(buffer: &mut [u8], value: u32) -> Result<(), EncodingError> {
     Ok(())
 }
 
-pub fn encode_str(buffer: &mut [u8], str: &str) -> Result<(), EncodingError> {
+pub fn encode_str(buffer: &mut [u8], str: &str) -> Result {
     let str = str.as_bytes();
 
     if str.len() > u16::MAX as usize {
@@ -51,7 +59,7 @@ pub fn encode_str(buffer: &mut [u8], str: &str) -> Result<(), EncodingError> {
     Ok(())
 }
 
-pub fn encode_var_int(buffer: &mut [u8], value: u32) -> Result<(), EncodingError> {
+pub fn encode_var_int(buffer: &mut [u8], value: u32) -> Result {
     match buffer {
         b if value < 0x80 && b.len() >= 1 => {
             b[0] = value as u8;
@@ -82,20 +90,76 @@ pub fn encode_var_int(buffer: &mut [u8], value: u32) -> Result<(), EncodingError
     Ok(())
 }
 
-pub fn encode_bin_data(buffer: &mut [u8], data: &[u8]) -> Result<(), EncodingError> {
+pub fn encode_bin_data(buffer: &mut [u8], data: &[u8]) -> Result {
     if data.len() > u16::MAX as usize {
         return Err(EncodingError::StringTooLong);
     }
-    
+
     if buffer.len() < data.len() + 2 {
         return Err(EncodingError::BufferTooSmall);
     }
 
     encode_u16(buffer, data.len() as u16)?;
 
-    buffer[2..data.len()+2].copy_from_slice(data);
-    
+    buffer[2..data.len() + 2].copy_from_slice(data);
+
     Ok(())
+}
+
+pub fn encode_connect(buffer: &mut [u8], connect: &Connect) -> Result {
+    todo!()
+}
+
+pub fn encode_conn_ack(buffer: &mut [u8], conn_ack: &ConnAck) -> Result {
+    todo!()
+}
+
+pub fn encode_disconnect(buffer: &mut [u8], disconnect: &Disconnect) -> Result {
+    todo!()
+}
+
+pub fn encode_publish(buffer: &mut [u8], publish: &Publish) -> Result {
+    todo!()
+}
+
+pub fn encode_pub_ack(buffer: &mut [u8], pub_ack: &PubAck) -> Result {
+    todo!()
+}
+
+pub fn encode_pub_rec(buffer: &mut [u8], pub_rec: &PubRec) -> Result {
+    todo!()
+}
+
+pub fn encode_pub_rel(buffer: &mut [u8], pub_rel: &PubRel) -> Result {
+    todo!()
+}
+
+pub fn encode_pub_comp(buffer: &mut [u8], pub_comp: &PubComp) -> Result {
+    todo!()
+}
+
+pub fn encode_subscribe(buffer: &mut [u8], subscribe: &Subscribe) -> Result {
+    todo!()
+}
+
+pub fn encode_sub_ack(buffer: &mut [u8], sub_ack: &SubAck) -> Result {
+    todo!()
+}
+
+pub fn encode_unsubscribe(buffer: &mut [u8], unsubscribe: &Unsubscribe) -> Result {
+    todo!()
+}
+
+pub fn encode_unsub_ack(buffer: &mut [u8], unsub_ack: &UnsubAck) -> Result {
+    todo!()
+}
+
+pub fn encode_ping_req(buffer: &mut [u8]) -> Result {
+    todo!()
+}
+
+pub fn encode_ping_resp(buffer: &mut [u8]) -> Result {
+    todo!()
 }
 
 #[cfg(test)]
@@ -211,6 +275,48 @@ mod encode_bin_data_tests {
         let result = encode_bin_data(&mut buffer, data);
 
         assert!(result.is_ok());
-        assert_eq!(&buffer[..data.len()+2], &[0, 5, 1, 2, 3, 4, 5]);
+        assert_eq!(&buffer[..data.len() + 2], &[0, 5, 1, 2, 3, 4, 5]);
+    }
+}
+
+#[cfg(test)]
+mod encode_connect_tests {
+    use super::*;
+    use crate::packets::connect::*;
+
+    #[test]
+    fn encode_connect_writes_packet_to_buffer() {
+        let mut buffer = [0u8; 50];
+        let expected = &[
+            0u8, 0x04, b'M', b'Q', b'T', b'T', //Protocol name
+            0x05, //Protocol version
+            0xCE, //Connect Flags
+            0x0A, //Keep Alive
+            0x00, //
+        ];
+        let connect = Connect::new("client-id");
+
+        let result = encode_connect(&mut buffer, &connect);
+
+        assert!(result.is_ok());
+        assert_eq!(expected, &buffer[..expected.len()]);
+    }
+}
+
+#[cfg(test)]
+mod encode_conn_ack_tests {
+    use super::*;
+    use crate::packets::conn_ack::*;
+
+    #[test]
+    fn encode_conn_ack_writes_packet_to_buffer() {
+        let mut buffer = [0u8; 100];
+        let conn_ack = ConnAck::new(true, ReasonCode::Success);
+        let expected = &[0x20u8, 0x00];
+
+        let result = encode_conn_ack(&mut buffer, &conn_ack);
+
+        assert!(result.is_ok());
+        assert_eq!(expected, &buffer[..expected.len()]);
     }
 }
