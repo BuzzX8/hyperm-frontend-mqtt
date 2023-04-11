@@ -82,6 +82,22 @@ pub fn encode_var_int(buffer: &mut [u8], value: u32) -> Result<(), EncodingError
     Ok(())
 }
 
+pub fn encode_bin_data(buffer: &mut [u8], data: &[u8]) -> Result<(), EncodingError> {
+    if data.len() > u16::MAX as usize {
+        return Err(EncodingError::StringTooLong);
+    }
+    
+    if buffer.len() < data.len() + 2 {
+        return Err(EncodingError::BufferTooSmall);
+    }
+
+    encode_u16(buffer, data.len() as u16)?;
+
+    buffer[2..data.len()+2].copy_from_slice(data);
+    
+    Ok(())
+}
+
 #[cfg(test)]
 mod encode_u16_tests {
     use super::{encode_u16, EncodingError};
@@ -180,5 +196,21 @@ mod encode_var_int_tests {
 
         assert!(result.is_ok());
         assert_eq!(expected, &buffer[..expected.len()]);
+    }
+}
+
+#[cfg(test)]
+mod encode_bin_data_tests {
+    use super::*;
+
+    #[test]
+    fn encode_bin_data_writes_data_to_buffer() {
+        let mut buffer = [0u8; 10];
+        let data = &[1, 2, 3, 4, 5][..];
+
+        let result = encode_bin_data(&mut buffer, data);
+
+        assert!(result.is_ok());
+        assert_eq!(&buffer[..data.len()+2], &[0, 5, 1, 2, 3, 4, 5]);
     }
 }
