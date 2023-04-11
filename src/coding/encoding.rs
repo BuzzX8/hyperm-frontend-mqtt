@@ -3,7 +3,8 @@ use std::mem::size_of;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum EncodingError {
     BufferTooSmall,
-    StringTooLong
+    StringTooLong,
+    ValueTooBig { max_val: u32 },
 }
 
 pub fn encode_u16(buffer: &mut [u8], value: u16) -> Result<(), EncodingError> {
@@ -33,12 +34,12 @@ pub fn encode_u32(buffer: &mut [u8], value: u32) -> Result<(), EncodingError> {
 pub fn encode_str(buffer: &mut [u8], str: &str) -> Result<(), EncodingError> {
     let str = str.as_bytes();
 
-    if str.len() > u16::MAX as usize{
+    if str.len() > u16::MAX as usize {
         return Err(EncodingError::StringTooLong);
     }
 
     if str.len() + size_of::<u16>() > buffer.len() {
-        return  Err(EncodingError::BufferTooSmall);
+        return Err(EncodingError::BufferTooSmall);
     }
 
     let len = str.len() as u16;
@@ -46,6 +47,37 @@ pub fn encode_str(buffer: &mut [u8], str: &str) -> Result<(), EncodingError> {
     encode_u16(buffer, len)?;
     let buffer = &mut buffer[2..];
     buffer[..str.len()].copy_from_slice(str);
+
+    Ok(())
+}
+
+pub fn encode_var_int(buffer: &mut [u8], value: u32) -> Result<(), EncodingError> {
+    match buffer {
+        b if value < 0x80 && b.len() >= 1 => {
+            b[0] = value as u8;
+        }
+        b if value < 0x4000 && b.len() >= 2 => {
+            b[0] = ((value & 0x7F) | 0x80) as u8;
+            b[1] = (value >> 7) as u8;
+        }
+        b if value < 0x20_00_00 && b.len() >= 3 => {
+            b[0] = ((value & 0x7F) | 0x80) as u8;
+            b[1] = ((value >> 7) | 0x80) as u8;
+            b[2] = (value >> 14) as u8;
+        }
+        b if value <= 0xFFF_FFFF && b.len() >= 4 => {
+            b[0] = ((value & 0x7F) | 0x80) as u8;
+            b[1] = ((value >> 7) | 0x80) as u8;
+            b[2] = ((value >> 14) | 0x80) as u8;
+            b[3] = (value >> 21) as u8;
+        }
+        _ if value > 0xFFF_FFFF => {
+            return Err(EncodingError::ValueTooBig {
+                max_val: 0xFFF_FFFF,
+            })
+        }
+        _ => return Err(EncodingError::BufferTooSmall),
+    }
 
     Ok(())
 }
@@ -117,5 +149,36 @@ mod encode_str_tests {
 
         assert!(result.is_ok());
         assert_eq!(&[0x00u8, 0x05, 0x41, 0xF0, 0xAA, 0x9B, 0x94], &buffer[..7]);
+    }
+}
+
+#[cfg(test)]
+mod encode_var_int_tests {
+    use super::*;
+
+    #[test]
+    fn encode_var_int_writes_to_buffer() {
+        let test_cases = [
+            (0x7Fu32, &[0x7Fu8][..]),
+            (128, &[0x80, 0x01]),
+            (16_383, &[0xFF, 0x7F]),
+            (16_384, &[0x80, 0x80, 0x01]),
+            (2_097_151, &[0xFF, 0xFF, 0x7F]),
+            (2_097_152, &[0x80, 0x80, 0x80, 0x01]),
+            (268_435_455, &[0xFF, 0xFF, 0xFF, 0x7F]),
+        ];
+
+        for (val, expected) in test_cases {
+            encode_var_int_writes_to_buffer_case(val, expected);
+        }
+    }
+
+    fn encode_var_int_writes_to_buffer_case(value: u32, expected: &[u8]) {
+        let mut buffer = [0u8; 10];
+
+        let result = encode_var_int(&mut buffer, value);
+
+        assert!(result.is_ok());
+        assert_eq!(expected, &buffer[..expected.len()]);
     }
 }
