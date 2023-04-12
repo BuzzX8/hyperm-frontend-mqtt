@@ -1,5 +1,5 @@
 [package]
-name = "hyperm-frontend-mqtt"
+name = "hyperm-mqtt"
 version = "0.1.0"
 edition = "2021"
 
