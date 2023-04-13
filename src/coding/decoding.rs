@@ -26,6 +26,19 @@ pub fn decode_u16(buffer: &[u8]) -> Result<u16> {
     Ok((u16::from_be_bytes(b), SIZE))
 }
 
+pub fn decode_u32(buffer: &[u8]) -> Result<u32> {
+    const SIZE: usize = size_of::<u32>();
+
+    if buffer.len() < SIZE {
+        return Err(DecodingError::BufferTooSmall);
+    }
+    
+    let mut b = [0u8; SIZE];
+    b.copy_from_slice(&buffer[..SIZE]);
+
+    Ok((u32::from_be_bytes(b), SIZE))
+}
+
 pub fn decode_connect(buffer: &[u8]) -> Result<Connect> {
     todo!()
 }
