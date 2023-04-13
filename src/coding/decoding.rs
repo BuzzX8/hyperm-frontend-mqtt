@@ -1,14 +1,29 @@
+use std::mem::size_of;
+
 use crate::packets::{
     conn_ack::ConnAck, connect::Connect, disconnect::Disconnect, pub_ack::PubAck,
     pub_comp::PubComp, pub_rec::PubRec, pub_rel::PubRel, publish::Publish, sub_ack::SubAck,
     subscribe::Subscribe,
 };
 
-type Result<T> = std::result::Result<T, DecodingError>;
+type Result<T> = std::result::Result<(T, usize), DecodingError>;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum DecodingError {
     BufferTooSmall,
+}
+
+pub fn decode_u16(buffer: &[u8]) -> Result<u16> {
+    const SIZE: usize = size_of::<u16>();
+
+    if buffer.len() < SIZE {
+        return Err(DecodingError::BufferTooSmall);
+    }
+
+    let mut b = [0u8; SIZE];
+    b.copy_from_slice(&buffer[..SIZE]);
+
+    Ok((u16::from_be_bytes(b), SIZE))
 }
 
 pub fn decode_connect(buffer: &[u8]) -> Result<Connect> {

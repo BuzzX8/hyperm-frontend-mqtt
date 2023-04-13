@@ -16,21 +16,25 @@ pub enum EncodingError {
 }
 
 pub fn encode_u16(buffer: &mut [u8], value: u16) -> Result {
+    const SIZE: usize = size_of::<u16>();
+
     match buffer {
-        _ if buffer.len() < size_of::<u16>() => Err(EncodingError::BufferTooSmall),
+        _ if buffer.len() < SIZE => Err(EncodingError::BufferTooSmall),
         b => {
-            b[..size_of::<u16>()].copy_from_slice(&value.to_be_bytes()[..]);
-            Ok(size_of::<u16>())
+            b[..SIZE].copy_from_slice(&value.to_be_bytes()[..]);
+            Ok(SIZE)
         }
     }
 }
 
 pub fn encode_u32(buffer: &mut [u8], value: u32) -> Result {
+    const SIZE: usize = size_of::<u32>();
+    
     match buffer {
-        _ if buffer.len() < size_of::<u32>() => Err(EncodingError::BufferTooSmall),
+        _ if buffer.len() < SIZE => Err(EncodingError::BufferTooSmall),
         b => {
-            b[..size_of::<u32>()].copy_from_slice(&value.to_be_bytes()[..]);
-            Ok(size_of::<u32>())
+            b[..SIZE].copy_from_slice(&value.to_be_bytes()[..]);
+            Ok(SIZE)
         }
     }
 }
