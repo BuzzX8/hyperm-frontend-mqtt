@@ -1,6 +1,6 @@
 use std::mem::size_of;
 
-use hyperm_mqtt::coding::decoding::{decode_u16, decode_u32, DecodingError, decode_str};
+use hyperm_mqtt::coding::decoding::{decode_str, decode_u16, decode_u32, DecodingError, decode_var_int};
 
 #[test]
 fn decode_u16_reads_value_from_buffer() {
@@ -68,4 +68,36 @@ fn decode_str_returns_error_if_buffer_too_small() {
 
     assert!(result.is_err());
     assert_eq!(DecodingError::BufferTooSmall, result.unwrap_err());
+}
+
+#[test]
+fn decode_var_int_reads_value_from_buffer() {
+    let test_cases = [
+        (0x7Fu32, &[0x7Fu8][..], 1),
+        (128, &[0x80, 0x01], 2),
+        (16_383, &[0xFF, 0x7F], 2),
+        (16_384, &[0x80, 0x80, 0x01], 3),
+        (2_097_151, &[0xFF, 0xFF, 0x7F], 3),
+        (2_097_152, &[0x80, 0x80, 0x80, 0x01], 4),
+        (268_435_455, &[0xFF, 0xFF, 0xFF, 0x7F], 4),
+    ];
+
+    for (v, b, s) in test_cases {
+        decode_var_int_reads_value_from_buffer_case(b, v, s);
+    }
+}
+
+fn decode_var_int_reads_value_from_buffer_case(
+    buffer: &[u8],
+    expected_value: u32,
+    expected_size: usize,
+) {
+    let result = decode_var_int(buffer);
+
+    assert!(result.is_ok());
+
+    let (value, size) = result.unwrap();
+
+    assert_eq!(expected_value, value);
+    assert_eq!(expected_size, size);
 }

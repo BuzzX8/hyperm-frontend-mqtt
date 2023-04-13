@@ -59,6 +59,56 @@ pub fn decode_str(buffer: &[u8]) -> Result<String> {
     Ok((str.to_owned(), offset + len))
 }
 
+pub fn decode_var_int(buffer: &[u8]) -> Result<u32> {
+    if let [] = buffer {
+        return  Err(DecodingError::BufferTooSmall);
+    }
+
+    let mut value = buffer[0] as u32;
+
+    if value < 0x80 {
+        return Ok((value, 1));
+    }
+
+    if buffer.len() < 2 {
+        return Err(DecodingError::BufferTooSmall);
+    }
+
+    value &= 0x7F;
+    let mut next_byte = buffer[1] as u32;
+    value = (next_byte << 7) | value;
+
+    if next_byte < 0x80 {
+        return Ok((value, 2));
+    }
+
+    if buffer.len() < 3 {
+        return Err(DecodingError::BufferTooSmall);
+    }
+
+    value &= 0x3F_FF;
+    next_byte = buffer[2] as u32;
+    value = (next_byte << 14) | value;
+
+    if next_byte < 0x80 {
+        return Ok((value, 3));
+    }
+
+    if buffer.len() < 4 {
+        return Err(DecodingError::BufferTooSmall);
+    }
+
+    value &= 0x1F_FF_FF;
+    next_byte = buffer[3] as u32;
+    value = (next_byte << 21) | value;
+
+    Ok((value, 4))
+}
+
+pub fn decode_bin_data(buffer: &[u8]) -> Result<Vec<u8>> {
+    todo!()
+}
+
 pub fn decode_connect(buffer: &[u8]) -> Result<Connect> {
     todo!()
 }
