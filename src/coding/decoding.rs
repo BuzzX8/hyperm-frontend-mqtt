@@ -44,13 +44,12 @@ pub fn decode_u32(buffer: &[u8]) -> DecodingResult<u32> {
 
 pub fn decode_str(buffer: &[u8]) -> DecodingResult<String> {
     let (len, offset) = decode_u16(&buffer)?;
-    let len = len as usize;
+    let size = len as usize + offset;
 
-    if buffer.len() < len + offset {
+    if buffer.len() < size {
         return Err(DecodingError::BufferTooSmall);
     }
 
-    let size = len + offset;
     let str = std::str::from_utf8(&buffer[offset..size])?;
 
     Ok((str.to_owned(), size))
