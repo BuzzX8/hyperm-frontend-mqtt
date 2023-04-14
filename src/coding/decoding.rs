@@ -106,7 +106,15 @@ pub fn decode_var_int(buffer: &[u8]) -> Result<u32> {
 }
 
 pub fn decode_bin_data(buffer: &[u8]) -> Result<Vec<u8>> {
-    todo!()
+
+    let (value, offset) = decode_u16(buffer)?;
+    let size = offset + value as usize;
+
+    if buffer.len() < size {
+        return Err(DecodingError::BufferTooSmall);
+    }
+
+    Ok((buffer[offset..].into(), size))
 }
 
 pub fn decode_connect(buffer: &[u8]) -> Result<Connect> {

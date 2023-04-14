@@ -1,6 +1,6 @@
 use std::mem::size_of;
 
-use hyperm_mqtt::coding::decoding::{decode_str, decode_u16, decode_u32, DecodingError, decode_var_int};
+use hyperm_mqtt::coding::decoding::{decode_str, decode_u16, decode_u32, DecodingError, decode_var_int, decode_bin_data};
 
 #[test]
 fn decode_u16_reads_value_from_buffer() {
@@ -100,4 +100,18 @@ fn decode_var_int_reads_value_from_buffer_case(
 
     assert_eq!(expected_value, value);
     assert_eq!(expected_size, size);
+}
+
+#[test]
+fn decode_bin_data_reads_data_from_buffer(){
+    let buffer = [0u8, 5, 0x01, 0x02, 0x30, 0x04, 0x50];
+
+    let result = decode_bin_data(&buffer);
+
+    assert!(result.is_ok());
+
+    let (data, size) = result.unwrap();
+
+    assert_eq!(&buffer[2..], &data);
+    assert_eq!(buffer.len(), size);
 }
