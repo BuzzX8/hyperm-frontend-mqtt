@@ -50,9 +50,10 @@ pub fn decode_str(buffer: &[u8]) -> DecodingResult<String> {
         return Err(DecodingError::BufferTooSmall);
     }
 
-    let str = std::str::from_utf8(&buffer[offset..len])?;
+    let size = len + offset;
+    let str = std::str::from_utf8(&buffer[offset..size])?;
 
-    Ok((str.to_owned(), offset + len))
+    Ok((str.to_owned(), size))
 }
 
 pub fn decode_var_int(buffer: &[u8]) -> DecodingResult<u32> {

@@ -1,6 +1,6 @@
 use hyperm_mqtt::{
     coding::*,
-    packets::conn_ack::{ConnAck, ConnectReasonCode},
+    packets::{ConnAck, ConnectReasonCode},
 };
 
 #[test]
