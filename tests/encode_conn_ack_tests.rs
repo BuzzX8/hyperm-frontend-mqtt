@@ -1,4 +1,7 @@
-use hyperm_mqtt::{packets::conn_ack::{ConnAck, ReasonCode}, coding::encoding::encode_conn_ack};
+use hyperm_mqtt::{
+    coding::*,
+    packets::conn_ack::{ConnAck, ReasonCode},
+};
 
 #[test]
 #[ignore]

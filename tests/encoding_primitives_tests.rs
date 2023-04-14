@@ -1,4 +1,4 @@
-use hyperm_mqtt::coding::encoding::*;
+use hyperm_mqtt::coding::*;
 
 #[test]
 fn encode_u16_wites_value_to_buffer() {

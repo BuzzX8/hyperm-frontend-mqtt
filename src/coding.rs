@@ -1,2 +1,5 @@
-pub mod encoding;
-pub mod decoding;
+mod encoding;
+mod decoding;
+
+pub use encoding::*;
+pub use decoding::*;

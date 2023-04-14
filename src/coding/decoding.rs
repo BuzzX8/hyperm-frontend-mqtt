@@ -6,7 +6,7 @@ use crate::packets::{
     subscribe::Subscribe,
 };
 
-type Result<T> = std::result::Result<(T, usize), DecodingError>;
+type DecodingResult<T> = std::result::Result<(T, usize), DecodingError>;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum DecodingError {
@@ -20,7 +20,7 @@ impl From<Utf8Error> for DecodingError {
     }
 }
 
-pub fn decode_u16(buffer: &[u8]) -> Result<u16> {
+pub fn decode_u16(buffer: &[u8]) -> DecodingResult<u16> {
     const SIZE: usize = size_of::<u16>();
 
     if buffer.len() < SIZE {
@@ -33,7 +33,7 @@ pub fn decode_u16(buffer: &[u8]) -> Result<u16> {
     Ok((u16::from_be_bytes(b), SIZE))
 }
 
-pub fn decode_u32(buffer: &[u8]) -> Result<u32> {
+pub fn decode_u32(buffer: &[u8]) -> DecodingResult<u32> {
     const SIZE: usize = size_of::<u32>();
 
     if buffer.len() < SIZE {
@@ -46,7 +46,7 @@ pub fn decode_u32(buffer: &[u8]) -> Result<u32> {
     Ok((u32::from_be_bytes(b), SIZE))
 }
 
-pub fn decode_str(buffer: &[u8]) -> Result<String> {
+pub fn decode_str(buffer: &[u8]) -> DecodingResult<String> {
     let (len, offset) = decode_u16(&buffer)?;
     let len = len as usize;
 
@@ -59,7 +59,7 @@ pub fn decode_str(buffer: &[u8]) -> Result<String> {
     Ok((str.to_owned(), offset + len))
 }
 
-pub fn decode_var_int(buffer: &[u8]) -> Result<u32> {
+pub fn decode_var_int(buffer: &[u8]) -> DecodingResult<u32> {
     if let [] = buffer {
         return  Err(DecodingError::BufferTooSmall);
     }
@@ -105,7 +105,7 @@ pub fn decode_var_int(buffer: &[u8]) -> Result<u32> {
     Ok((value, 4))
 }
 
-pub fn decode_bin_data(buffer: &[u8]) -> Result<Vec<u8>> {
+pub fn decode_bin_data(buffer: &[u8]) -> DecodingResult<Vec<u8>> {
 
     let (value, offset) = decode_u16(buffer)?;
     let size = offset + value as usize;
@@ -117,42 +117,42 @@ pub fn decode_bin_data(buffer: &[u8]) -> Result<Vec<u8>> {
     Ok((buffer[offset..].into(), size))
 }
 
-pub fn decode_connect(buffer: &[u8]) -> Result<Connect> {
+pub fn decode_connect(buffer: &[u8]) -> DecodingResult<Connect> {
     todo!()
 }
 
-pub fn decode_conn_ack(buffer: &[u8]) -> Result<ConnAck> {
+pub fn decode_conn_ack(buffer: &[u8]) -> DecodingResult<ConnAck> {
     todo!()
 }
 
-pub fn decode_disconnect(buffer: &[u8]) -> Result<Disconnect> {
+pub fn decode_disconnect(buffer: &[u8]) -> DecodingResult<Disconnect> {
     todo!()
 }
 
-pub fn decode_subscribe(buffer: &[u8]) -> Result<Subscribe> {
+pub fn decode_subscribe(buffer: &[u8]) -> DecodingResult<Subscribe> {
     todo!()
 }
 
-pub fn decode_sub_ack(buffer: &[u8]) -> Result<SubAck> {
+pub fn decode_sub_ack(buffer: &[u8]) -> DecodingResult<SubAck> {
     todo!()
 }
 
-pub fn decode_publish(buffer: &[u8]) -> Result<Publish> {
+pub fn decode_publish(buffer: &[u8]) -> DecodingResult<Publish> {
     todo!()
 }
 
-pub fn decode_pub_ack(buffer: &[u8]) -> Result<PubAck> {
+pub fn decode_pub_ack(buffer: &[u8]) -> DecodingResult<PubAck> {
     todo!()
 }
 
-pub fn decode_pub_rec(buffer: &[u8]) -> Result<PubRec> {
+pub fn decode_pub_rec(buffer: &[u8]) -> DecodingResult<PubRec> {
     todo!()
 }
 
-pub fn decode_pub_rel(buffer: &[u8]) -> Result<PubRel> {
+pub fn decode_pub_rel(buffer: &[u8]) -> DecodingResult<PubRel> {
     todo!()
 }
 
-pub fn decode_pub_comp(buffer: &[u8]) -> Result<PubComp> {
+pub fn decode_pub_comp(buffer: &[u8]) -> DecodingResult<PubComp> {
     todo!()
 }

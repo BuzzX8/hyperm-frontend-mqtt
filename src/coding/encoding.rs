@@ -6,7 +6,7 @@ use crate::packets::{
     subscribe::Subscribe, unsub_ack::UnsubAck, unsubscribe::Unsubscribe,
 };
 
-type Result = std::result::Result<usize, EncodingError>;
+type EncodingResult = std::result::Result<usize, EncodingError>;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum EncodingError {
@@ -15,7 +15,7 @@ pub enum EncodingError {
     ValueTooBig { max_val: u32 },
 }
 
-pub fn encode_u16(buffer: &mut [u8], value: u16) -> Result {
+pub fn encode_u16(buffer: &mut [u8], value: u16) -> EncodingResult {
     const SIZE: usize = size_of::<u16>();
 
     match buffer {
@@ -27,7 +27,7 @@ pub fn encode_u16(buffer: &mut [u8], value: u16) -> Result {
     }
 }
 
-pub fn encode_u32(buffer: &mut [u8], value: u32) -> Result {
+pub fn encode_u32(buffer: &mut [u8], value: u32) -> EncodingResult {
     const SIZE: usize = size_of::<u32>();
     
     match buffer {
@@ -39,7 +39,7 @@ pub fn encode_u32(buffer: &mut [u8], value: u32) -> Result {
     }
 }
 
-pub fn encode_str(buffer: &mut [u8], str: &str) -> Result {
+pub fn encode_str(buffer: &mut [u8], str: &str) -> EncodingResult {
     match str.as_bytes() {
         _ if str.len() > u16::MAX as usize => Err(EncodingError::StringTooLong),
         _ if str.len() + size_of::<u16>() > buffer.len() => Err(EncodingError::BufferTooSmall),
@@ -52,7 +52,7 @@ pub fn encode_str(buffer: &mut [u8], str: &str) -> Result {
     }
 }
 
-pub fn encode_var_int(buffer: &mut [u8], value: u32) -> Result {
+pub fn encode_var_int(buffer: &mut [u8], value: u32) -> EncodingResult {
     match buffer {
         b if value < 0x80 && b.len() >= 1 => {
             b[0] = value as u8;
@@ -83,7 +83,7 @@ pub fn encode_var_int(buffer: &mut [u8], value: u32) -> Result {
     }
 }
 
-pub fn encode_bin_data(buffer: &mut [u8], data: &[u8]) -> Result {
+pub fn encode_bin_data(buffer: &mut [u8], data: &[u8]) -> EncodingResult {
     match buffer {
         _ if data.len() > u16::MAX as usize => Err(EncodingError::StringTooLong),
         _ if buffer.len() < data.len() + 2 => Err(EncodingError::BufferTooSmall),
@@ -95,58 +95,58 @@ pub fn encode_bin_data(buffer: &mut [u8], data: &[u8]) -> Result {
     }
 }
 
-pub fn encode_connect(buffer: &mut [u8], connect: &Connect) -> Result {
+pub fn encode_connect(buffer: &mut [u8], connect: &Connect) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_conn_ack(buffer: &mut [u8], conn_ack: &ConnAck) -> Result {
+pub fn encode_conn_ack(buffer: &mut [u8], conn_ack: &ConnAck) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_disconnect(buffer: &mut [u8], disconnect: &Disconnect) -> Result {
+pub fn encode_disconnect(buffer: &mut [u8], disconnect: &Disconnect) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_publish(buffer: &mut [u8], publish: &Publish) -> Result {
+pub fn encode_publish(buffer: &mut [u8], publish: &Publish) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_pub_ack(buffer: &mut [u8], pub_ack: &PubAck) -> Result {
+pub fn encode_pub_ack(buffer: &mut [u8], pub_ack: &PubAck) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_pub_rec(buffer: &mut [u8], pub_rec: &PubRec) -> Result {
+pub fn encode_pub_rec(buffer: &mut [u8], pub_rec: &PubRec) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_pub_rel(buffer: &mut [u8], pub_rel: &PubRel) -> Result {
+pub fn encode_pub_rel(buffer: &mut [u8], pub_rel: &PubRel) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_pub_comp(buffer: &mut [u8], pub_comp: &PubComp) -> Result {
+pub fn encode_pub_comp(buffer: &mut [u8], pub_comp: &PubComp) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_subscribe(buffer: &mut [u8], subscribe: &Subscribe) -> Result {
+pub fn encode_subscribe(buffer: &mut [u8], subscribe: &Subscribe) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_sub_ack(buffer: &mut [u8], sub_ack: &SubAck) -> Result {
+pub fn encode_sub_ack(buffer: &mut [u8], sub_ack: &SubAck) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_unsubscribe(buffer: &mut [u8], unsubscribe: &Unsubscribe) -> Result {
+pub fn encode_unsubscribe(buffer: &mut [u8], unsubscribe: &Unsubscribe) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_unsub_ack(buffer: &mut [u8], unsub_ack: &UnsubAck) -> Result {
+pub fn encode_unsub_ack(buffer: &mut [u8], unsub_ack: &UnsubAck) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_ping_req(buffer: &mut [u8]) -> Result {
+pub fn encode_ping_req(buffer: &mut [u8]) -> EncodingResult {
     todo!()
 }
 
-pub fn encode_ping_resp(buffer: &mut [u8]) -> Result {
+pub fn encode_ping_resp(buffer: &mut [u8]) -> EncodingResult {
     todo!()
 }

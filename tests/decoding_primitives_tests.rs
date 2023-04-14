@@ -1,6 +1,6 @@
 use std::mem::size_of;
 
-use hyperm_mqtt::coding::decoding::{decode_str, decode_u16, decode_u32, DecodingError, decode_var_int, decode_bin_data};
+use hyperm_mqtt::coding::*;
 
 #[test]
 fn decode_u16_reads_value_from_buffer() {
