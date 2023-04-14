@@ -1,4 +1,4 @@
-use hyperm_mqtt::{coding::*, packets::connect::Connect};
+use hyperm_mqtt::{coding::encode_connect, packets::Connect};
 
 #[test]
 #[ignore]

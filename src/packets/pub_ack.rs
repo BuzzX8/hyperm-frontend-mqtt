@@ -2,11 +2,11 @@ use super::{new_packet_id, PacketId};
 
 pub struct PubAck {
     id: PacketId,
-    reason_code: ReasonCode,
+    reason_code: PubAckReasonCode,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum ReasonCode {
+pub enum PubAckReasonCode {
     Success = 0x00,
     NoMatchingSubscribers = 0x10,
     UnspecifiedError = 0x80,
@@ -19,7 +19,7 @@ pub enum ReasonCode {
 }
 
 impl PubAck {
-    pub fn new(reason_code: ReasonCode) -> PubAck {
+    pub fn new(reason_code: PubAckReasonCode) -> PubAck {
         PubAck {
             id: new_packet_id(),
             reason_code,
@@ -30,7 +30,7 @@ impl PubAck {
         self.id
     }
 
-    pub fn reason_code(&self) -> ReasonCode {
+    pub fn reason_code(&self) -> PubAckReasonCode {
         self.reason_code
     }
 }
@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn new_creates_pub_ack_packet() {
-        let reason_code = ReasonCode::ImplementationSpecificError;
+        let reason_code = PubAckReasonCode::ImplementationSpecificError;
         let pub_ack = PubAck::new(reason_code);
 
         assert_ne!(0, pub_ack.id());

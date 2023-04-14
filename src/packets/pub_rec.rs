@@ -2,11 +2,11 @@ use super::{new_packet_id, PacketId};
 
 pub struct PubRec {
     id: PacketId,
-    reason_code: ReasonCode,
+    reason_code: PubRecReasonCode,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum ReasonCode {
+pub enum PubRecReasonCode {
     Success = 0x00,
     NoMatchingSubscribers = 0x10,
     UnspecifiedError = 0x80,
@@ -19,7 +19,7 @@ pub enum ReasonCode {
 }
 
 impl PubRec {
-    pub fn new(reason_code: ReasonCode) -> PubRec {
+    pub fn new(reason_code: PubRecReasonCode) -> PubRec {
         PubRec {
             id: new_packet_id(),
             reason_code,
@@ -30,7 +30,7 @@ impl PubRec {
         self.id
     }
 
-    pub fn reason_code(&self) -> ReasonCode {
+    pub fn reason_code(&self) -> PubRecReasonCode {
         self.reason_code
     }
 }
@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn new_creates_pub_rec_packet() {
-        let reason_code = ReasonCode::ImplementationSpecificError;
+        let reason_code = PubRecReasonCode::ImplementationSpecificError;
         let pub_ack = PubRec::new(reason_code);
 
         assert_ne!(0, pub_ack.id());

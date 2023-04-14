@@ -1,10 +1,6 @@
 use std::mem::size_of;
 
-use crate::packets::{
-    conn_ack::ConnAck, connect::Connect, disconnect::Disconnect, pub_ack::PubAck,
-    pub_comp::PubComp, pub_rec::PubRec, pub_rel::PubRel, publish::Publish, sub_ack::SubAck,
-    subscribe::Subscribe, unsub_ack::UnsubAck, unsubscribe::Unsubscribe,
-};
+use crate::packets::*;
 
 type EncodingResult = std::result::Result<usize, EncodingError>;
 

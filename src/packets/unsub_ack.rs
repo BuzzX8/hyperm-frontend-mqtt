@@ -2,11 +2,11 @@ use super::*;
 
 pub struct UnsubAck {
     id: PacketId,
-    reason_code: ReasonCode,
+    reason_code: UnsubAckReasonCode,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum ReasonCode {
+pub enum UnsubAckReasonCode {
     Success = 0x00,
     NoSubscriptionExisted = 0x11,
     UnspecifiedError = 0x80,
@@ -17,7 +17,7 @@ pub enum ReasonCode {
 }
 
 impl UnsubAck {
-    pub fn new(reason_code: ReasonCode) -> UnsubAck {
+    pub fn new(reason_code: UnsubAckReasonCode) -> UnsubAck {
         UnsubAck {
             id: new_packet_id(),
             reason_code,
@@ -28,7 +28,7 @@ impl UnsubAck {
         self.id
     }
 
-    pub fn reason_code(&self) -> ReasonCode {
+    pub fn reason_code(&self) -> UnsubAckReasonCode {
         self.reason_code
     }
 }
@@ -39,7 +39,7 @@ mod tests {
     
     #[test]
     fn unsub_ack_new_creates_packet() {
-        let reason_code = ReasonCode::Success;
+        let reason_code = UnsubAckReasonCode::Success;
         let unsub_ack = UnsubAck::new(reason_code);
 
         assert_ne!(0, unsub_ack.id());

@@ -1,10 +1,6 @@
 use std::{mem::size_of, str::Utf8Error};
 
-use crate::packets::{
-    conn_ack::ConnAck, connect::Connect, disconnect::Disconnect, pub_ack::PubAck,
-    pub_comp::PubComp, pub_rec::PubRec, pub_rel::PubRel, publish::Publish, sub_ack::SubAck,
-    subscribe::Subscribe,
-};
+use crate::packets::*;
 
 type DecodingResult<T> = std::result::Result<(T, usize), DecodingError>;
 
