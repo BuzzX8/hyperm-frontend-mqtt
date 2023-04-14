@@ -2,17 +2,17 @@ use super::{new_packet_id, PacketId};
 
 pub struct PubRel {
     id: PacketId,
-    reason_code: ReasonCode,
+    reason_code: PubRelReasonCode,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum ReasonCode {
+pub enum PubRelReasonCode {
     Success = 0x00,
     PacketIdentifierNotFound = 0x92,
 }
 
 impl PubRel {
-    pub fn new(reason_code: ReasonCode) -> PubRel {
+    pub fn new(reason_code: PubRelReasonCode) -> PubRel {
         PubRel {
             id: new_packet_id(),
             reason_code,
@@ -23,7 +23,7 @@ impl PubRel {
         self.id
     }
 
-    pub fn reason_code(&self) -> ReasonCode {
+    pub fn reason_code(&self) -> PubRelReasonCode {
         self.reason_code
     }
 }
@@ -34,7 +34,7 @@ mod tests {
 
     #[test]
     fn new_creates_pub_rel_packet() {
-        let reason_code = ReasonCode::PacketIdentifierNotFound;
+        let reason_code = PubRelReasonCode::PacketIdentifierNotFound;
         let pub_rel = PubRel::new(reason_code);
 
         assert_ne!(0, pub_rel.id());

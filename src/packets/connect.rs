@@ -3,37 +3,46 @@ pub struct Connect {
     clean_start: bool,
     keep_alive: Option<u16>,
     user_name: Option<String>,
-    //password: Option<&[u8]>
+    password: Option<Vec<u8>>
 }
 
 impl Connect {
-    fn new(client_id: &str) -> Connect {
+    pub fn new(client_id: &str) -> Connect {
         Connect {
             client_id: client_id.into(),
             clean_start: false,
-            keep_alive: Option::None,
-            user_name: Option::None
+            keep_alive: None,
+            user_name: None,
+            password: None
         }
     }
 
-    fn client_id(&self) -> &str {        
+    pub fn client_id(&self) -> &str {        
         &self.client_id
     }
 
-    fn clean_start(&self) -> bool {
+    pub fn clean_start(&self) -> bool {
         self.clean_start
     }
 
-    fn set_clean_start(&mut self, clean_start: bool) {
+    pub fn set_clean_start(&mut self, clean_start: bool) {
         self.clean_start = clean_start;
     }
 
-    fn keep_alive(&self) -> Option<u16> {
+    pub fn keep_alive(&self) -> Option<u16> {
         self.keep_alive
     }
 
-    fn set_keep_alive(&mut self, keep_alive: u16) {
+    pub fn set_keep_alive(&mut self, keep_alive: u16) {
         self.keep_alive = Some(keep_alive);
+    }
+
+    pub fn set_user_name(&mut self, user_name: &str) {
+        self.user_name = Some(user_name.into());
+    }
+
+    pub fn set_password(&mut self, password: &[u8]) {
+        self.password = Some(password.into());
     }
 }
 

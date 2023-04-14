@@ -2,11 +2,11 @@ use super::*;
 
 pub struct SubAck {
     id: PacketId,
-    reason_codes: Vec<ReasonCode>,
+    reason_codes: Vec<SubAckReasonCode>,
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum ReasonCode {
+pub enum SubAckReasonCode {
     GrantedQos0 = 0x00,
     GrantedQos1 = 0x01,
     GrantedQos2 = 0x02,
@@ -22,7 +22,7 @@ pub enum ReasonCode {
 }
 
 impl SubAck {
-    pub fn new(reason_codes: &[ReasonCode]) -> SubAck {
+    pub fn new(reason_codes: &[SubAckReasonCode]) -> SubAck {
         SubAck {
             id: new_packet_id(),
             reason_codes: reason_codes.into(),
@@ -33,7 +33,7 @@ impl SubAck {
         self.id
     }
 
-    pub fn reason_codes(&self) -> &[ReasonCode] {
+    pub fn reason_codes(&self) -> &[SubAckReasonCode] {
         &self.reason_codes
     }
 }
@@ -44,7 +44,7 @@ mod tests {
 
     #[test]
     fn subscribe_new_creates_packet() {
-        let reason_codes = [ReasonCode::GrantedQos0, ReasonCode::GrantedQos1];
+        let reason_codes = [SubAckReasonCode::GrantedQos0, SubAckReasonCode::GrantedQos1];
         let sub_ack = SubAck::new(&reason_codes[..]);
 
         assert_ne!(0, sub_ack.id());

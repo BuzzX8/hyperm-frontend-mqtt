@@ -1,10 +1,10 @@
 pub struct ConnAck {
     session_present: bool,
-    reason_code: ReasonCode,
+    reason_code: ConnectReasonCode,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum ReasonCode {
+pub enum ConnectReasonCode {
     Success = 0x00,
     UnspecifiedError = 0x80,
     MalformedPacket = 0x81,
@@ -29,7 +29,7 @@ pub enum ReasonCode {
 }
 
 impl ConnAck {
-    pub fn new(session_present: bool, reason_code: ReasonCode) -> ConnAck {
+    pub fn new(session_present: bool, reason_code: ConnectReasonCode) -> ConnAck {
         ConnAck {
             session_present,
             reason_code,
@@ -40,7 +40,7 @@ impl ConnAck {
         self.session_present
     }
 
-    pub fn reason_code(&self) -> ReasonCode {
+    pub fn reason_code(&self) -> ConnectReasonCode {
         self.reason_code
     }
 }
@@ -51,7 +51,7 @@ mod tests {
 
     #[test]
     fn new_creates_correct_conn_ack() {
-        let reason_code = ReasonCode::BadAuthenticationMethod;
+        let reason_code = ConnectReasonCode::BadAuthenticationMethod;
         let conn_ack = ConnAck::new(true, reason_code);
 
         assert!(conn_ack.session_present());

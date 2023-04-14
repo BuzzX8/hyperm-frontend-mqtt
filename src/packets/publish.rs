@@ -25,12 +25,24 @@ impl Publish {
         self.id
     }
 
+    pub fn dup(&self) -> bool {
+        self.dup
+    }
+
     pub fn qos(&self) -> Qos {
         self.qos
     }
 
     pub fn payload(&self) -> &[u8] {
         &self.payload
+    }
+
+    pub fn retain(&self) -> bool {
+        self.retain
+    }
+
+    pub fn topic_name(&self) -> &str {
+        &self.topic_name
     }
 }
 

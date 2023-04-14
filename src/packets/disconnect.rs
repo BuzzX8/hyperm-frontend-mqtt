@@ -1,9 +1,9 @@
 pub struct Disconnect {
-    reason_code: ReasonCode,
+    reason_code: DisconnectReasonCode,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub enum ReasonCode {
+pub enum DisconnectReasonCode {
     NormalDisconnection = 0x00,
     DisconnectWithWillMessage = 0x04,
     UnspecifiedError = 0x80,
@@ -36,11 +36,11 @@ pub enum ReasonCode {
 }
 
 impl Disconnect {
-    pub fn new(reason_code: ReasonCode) -> Disconnect {
+    pub fn new(reason_code: DisconnectReasonCode) -> Disconnect {
         Disconnect { reason_code }
     }
 
-    pub fn reason_code(&self) -> ReasonCode {
+    pub fn reason_code(&self) -> DisconnectReasonCode {
         self.reason_code
     }
 }
@@ -51,7 +51,7 @@ mod tests {
 
     #[test]
     fn new_creates_correct_packet() {
-        let reason_code = ReasonCode::AdministrativeAction;
+        let reason_code = DisconnectReasonCode::AdministrativeAction;
         let packet = Disconnect::new(reason_code);
 
         assert_eq!(reason_code, packet.reason_code());
