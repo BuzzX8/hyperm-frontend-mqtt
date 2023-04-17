@@ -7,7 +7,7 @@ type DecodingResult<T> = std::result::Result<(T, usize), DecodingError>;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum DecodingError {
     BufferTooSmall,
-    InvalidUtf8String(Utf8Error)
+    InvalidUtf8String(Utf8Error),
 }
 
 impl From<Utf8Error> for DecodingError {
@@ -57,52 +57,44 @@ pub fn decode_str(buffer: &[u8]) -> DecodingResult<String> {
 
 pub fn decode_var_int(buffer: &[u8]) -> DecodingResult<u32> {
     if let [] = buffer {
-        return  Err(DecodingError::BufferTooSmall);
+        return Err(DecodingError::BufferTooSmall);
+    }
+
+    macro_rules! check_next_byte_and_buffer {
+        ($value:ident, $next_byte:ident, $size:literal) => {
+            if $next_byte < 0x80 {
+                return Ok(($value, $size));
+            }
+
+            if buffer.len() < ($size + 1) {
+                return Err(DecodingError::BufferTooSmall);
+            }
+        };
     }
 
     let mut value = buffer[0] as u32;
+    let mut next_byte: u32;
 
-    if value < 0x80 {
-        return Ok((value, 1));
+    check_next_byte_and_buffer!(value, value, 1);
+
+    macro_rules! update_value {
+        ($mask:literal, $index:literal, $bit_num:literal) => {
+            value &= $mask;
+            next_byte = buffer[$index] as u32;
+            value = (next_byte << $bit_num) | value;
+        };
     }
-
-    if buffer.len() < 2 {
-        return Err(DecodingError::BufferTooSmall);
-    }
-
-    value &= 0x7F;
-    let mut next_byte = buffer[1] as u32;
-    value = (next_byte << 7) | value;
-
-    if next_byte < 0x80 {
-        return Ok((value, 2));
-    }
-
-    if buffer.len() < 3 {
-        return Err(DecodingError::BufferTooSmall);
-    }
-
-    value &= 0x3F_FF;
-    next_byte = buffer[2] as u32;
-    value = (next_byte << 14) | value;
-
-    if next_byte < 0x80 {
-        return Ok((value, 3));
-    }
-
-    if buffer.len() < 4 {
-        return Err(DecodingError::BufferTooSmall);
-    }
-
-    value &= 0x1F_FF_FF;
-    next_byte = buffer[3] as u32;
-    value = (next_byte << 21) | value;
+    
+    update_value!(0x7F, 1, 7);
+    check_next_byte_and_buffer!(value, next_byte, 2);
+    update_value!(0x3F_FF, 2, 14);
+    check_next_byte_and_buffer!(value, next_byte, 3);
+    update_value!(0x1F_FF_FF, 3, 21);
 
     Ok((value, 4))
 }
 
 pub fn decode_bin_data(buffer: &[u8]) -> DecodingResult<Vec<u8>> {
-
     let (value, offset) = decode_u16(buffer)?;
     let size = offset + value as usize;
 
