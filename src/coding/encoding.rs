@@ -11,28 +11,25 @@ pub enum EncodingError {
     ValueTooBig { max_val: u32 },
 }
 
-pub fn encode_u16(buffer: &mut [u8], value: u16) -> EncodingResult {
-    const SIZE: usize = size_of::<u16>();
+macro_rules! encode_uint {
+    ($buffer:ident, $value:ident, $type:ty) => {
+        const SIZE: usize = size_of::<$type>();
 
-    match buffer {
-        _ if buffer.len() < SIZE => Err(EncodingError::BufferTooSmall),
-        b => {
-            b[..SIZE].copy_from_slice(&value.to_be_bytes()[..]);
-            Ok(SIZE)
+        if $buffer.len() < SIZE {
+            return Err(EncodingError::BufferTooSmall);
         }
-    }
+
+        $buffer[..SIZE].copy_from_slice(&$value.to_be_bytes()[..]);
+        return Ok(SIZE);
+    };
+}
+
+pub fn encode_u16(buffer: &mut [u8], value: u16) -> EncodingResult {
+    encode_uint!(buffer, value, u16);
 }
 
 pub fn encode_u32(buffer: &mut [u8], value: u32) -> EncodingResult {
-    const SIZE: usize = size_of::<u32>();
-    
-    match buffer {
-        _ if buffer.len() < SIZE => Err(EncodingError::BufferTooSmall),
-        b => {
-            b[..SIZE].copy_from_slice(&value.to_be_bytes()[..]);
-            Ok(SIZE)
-        }
-    }
+    encode_uint!(buffer, value, u32);
 }
 
 pub fn encode_str(buffer: &mut [u8], str: &str) -> EncodingResult {
