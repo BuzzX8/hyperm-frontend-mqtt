@@ -16,30 +16,27 @@ impl From<Utf8Error> for DecodingError {
     }
 }
 
+macro_rules! decode_uint {
+    ($buffer:ident, $type:ty) => {
+        const SIZE: usize = size_of::<$type>();
+
+        if $buffer.len() < SIZE {
+            return Err(DecodingError::BufferTooSmall);
+        }
+
+        let mut b = [0u8; SIZE];
+        b.copy_from_slice(&$buffer[..SIZE]);
+
+        return Ok((<$type>::from_be_bytes(b), SIZE));
+    };
+}
+
 pub fn decode_u16(buffer: &[u8]) -> DecodingResult<u16> {
-    const SIZE: usize = size_of::<u16>();
-
-    if buffer.len() < SIZE {
-        return Err(DecodingError::BufferTooSmall);
-    }
-
-    let mut b = [0u8; SIZE];
-    b.copy_from_slice(&buffer[..SIZE]);
-
-    Ok((u16::from_be_bytes(b), SIZE))
+    decode_uint!(buffer, u16);
 }
 
 pub fn decode_u32(buffer: &[u8]) -> DecodingResult<u32> {
-    const SIZE: usize = size_of::<u32>();
-
-    if buffer.len() < SIZE {
-        return Err(DecodingError::BufferTooSmall);
-    }
-
-    let mut b = [0u8; SIZE];
-    b.copy_from_slice(&buffer[..SIZE]);
-
-    Ok((u32::from_be_bytes(b), SIZE))
+    decode_uint!(buffer, u32);
 }
 
 pub fn decode_str(buffer: &[u8]) -> DecodingResult<String> {
