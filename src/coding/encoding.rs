@@ -24,6 +24,10 @@ macro_rules! encode_uint {
     };
 }
 
+pub fn encode_u8(buffer: &mut [u8], value: u8) -> EncodingResult {
+    encode_uint!(buffer, value, u8);
+}
+
 pub fn encode_u16(buffer: &mut [u8], value: u16) -> EncodingResult {
     encode_uint!(buffer, value, u16);
 }
@@ -93,7 +97,13 @@ pub fn encode_connect(buffer: &mut [u8], connect: &Connect) -> EncodingResult {
 }
 
 pub fn encode_conn_ack(buffer: &mut [u8], conn_ack: &ConnAck) -> EncodingResult {
-    todo!()
+    let mut offset = encode_u8(buffer, 0x20)?;
+    
+    offset += encode_var_int(&mut buffer[offset..], 2)?;
+    offset += encode_u8(&mut buffer[offset..], conn_ack.session_present().into())?;
+    offset += encode_u8(&mut buffer[offset..], conn_ack.reason_code() as u8)?;
+
+    Ok(offset)
 }
 
 pub fn encode_disconnect(buffer: &mut [u8], disconnect: &Disconnect) -> EncodingResult {
